@@ -15,10 +15,11 @@ A role-based Q&A system that uses RAG (Retrieval Augmented Generation) to answer
 
 - Frontend: React with JavaScript
 - Backend: Node.js with Express
+- RAG Server: Python with FastAPI
 - Database: MongoDB
-- Vector Database: Pinecone
+- Vector Database: ChromaDB
 - Authentication: JWT
-- PDF Processing: pdf-parse
+- PDF Processing: pdf-parse, PyMuPDF
 - LLM: Google Gemini
 - Styling: Tailwind CSS
 
@@ -31,14 +32,21 @@ rag-pdf/
 │   │   ├── components/    # Reusable components
 │   │   ├── pages/        # Page components
 │   │   ├── context/      # Auth context
-│   │   └── services/     # API services
-└── server/                # Node.js backend
-    ├── src/
-    │   ├── controllers/  # Route controllers
-    │   ├── models/       # Database models
-    │   ├── routes/       # API routes
-    │   ├── services/     # Business logic
-    │   └── utils/        # Helper functions
+│   │   └── api/          # API services
+├── server/                # Node.js backend
+│   ├── src/
+│   │   ├── controllers/  # Route controllers
+│   │   ├── models/       # Database models
+│   │   ├── routes/       # API routes
+│   │   ├── services/     # Business logic
+│   │   └── utils/        # Helper functions
+└── server-python/         # Python RAG server
+    ├── app/
+    │   ├── main.py       # FastAPI application
+    │   ├── rag.py        # RAG logic with ChromaDB
+    │   └── utils.py      # PDF processing utilities
+    ├── chroma_db/        # ChromaDB vector storage
+    └── requirements.txt  # Python dependencies
 ```
 
 ## Setup Instructions
@@ -46,9 +54,9 @@ rag-pdf/
 ### Prerequisites
 
 - Node.js (v16 or higher)
+- Python (v3.8 or higher)
 - MongoDB
-- Pinecone account
-- OpenAI API key
+- Google Gemini API key
 
 ### Backend Setup
 
@@ -66,13 +74,41 @@ rag-pdf/
    ```
    MONGODB_URI=your_mongodb_uri
    JWT_SECRET=your_jwt_secret
-   PINECONE_API_KEY=your_pinecone_api_key
-   OPENAI_API_KEY=your_openai_api_key
+   GEMINI_API_KEY=your_gemini_api_key
+   RAG_SERVICE_URL=http://localhost:8000
    ```
 
 4. Start the server:
    ```bash
    npm run dev
+   ```
+
+### Python RAG Server Setup
+
+1. Navigate to the server-python directory:
+   ```bash
+   cd server-python
+   ```
+
+2. Create a virtual environment:
+   ```bash
+   python -m venv env
+   source env/bin/activate  # On Windows: env\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create a .env file with the following variables:
+   ```
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+
+5. Start the Python server:
+   ```bash
+   uvicorn app.main:app --reload --port 8000
    ```
 
 ### Frontend Setup
@@ -90,6 +126,7 @@ rag-pdf/
 3. Create a .env file with the following variables:
    ```
    REACT_APP_API_URL=http://localhost:5000
+   REACT_APP_RAG_URL=http://localhost:8000
    ```
 
 4. Start the development server:
